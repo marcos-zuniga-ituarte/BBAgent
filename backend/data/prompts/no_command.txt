@@ -1,0 +1,1 @@
+No hay un cliente de terminal conectado. Conéctalo desde la configuración o revisa su estado si ya está en ejecución.

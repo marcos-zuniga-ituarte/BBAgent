@@ -1,0 +1,137 @@
+<task>
+Reconstruye por completo la memoria estructurada de la conversación.
+</task>
+
+<output_contract>
+- Devuelve solo un JSON válido del esquema ConversationMemory.
+- No escribas texto fuera del JSON.
+- No añadas comentarios, explicaciones ni markdown.
+- No añadas campos fuera del esquema.
+</output_contract>
+
+<core_rules>
+- Usa siempre la información más reciente en caso de conflicto.
+- No inventes información.
+- No conviertas inferencias en hechos sin marcarlo.
+- Si la información es suficiente, reconstruye sin preguntar.
+- No generes preguntas nuevas salvo que sean necesarias para continuidad.
+- Conserva solo información útil para futuros turnos.
+- Elimina small talk, ruido, duplicados, contenido resuelto, obsoleto o contradictorio.
+- No dupliques la misma información entre bloques.
+</core_rules>
+
+<id_rules>
+- Mantén el mismo id si el elemento sigue siendo el mismo.
+- Para elementos nuevos, usa next_id de forma secuencial.
+- Deja next_id preparado para el siguiente elemento nuevo.
+</id_rules>
+
+<classification_rules>
+Clasifica cada dato en el campo más específico posible, con esta prioridad:
+
+1. entities: personas y entidades clave del usuario
+2. constraints: restricciones obligatorias o limitaciones reales
+3. preferences: preferencias de comportamiento, estilo o elección
+4. decisions: decisiones de diseño que afectan el comportamiento futuro
+5. artifacts: archivos, código y componentes reutilizables
+6. facts: solo si no encaja claramente en los anteriores
+
+Reglas:
+- facts no es un fallback general.
+- Si un dato encaja en otro bloque, no lo pongas en facts.
+- No dupliques constraints en decisions.
+- No pongas preferences en constraints.
+- No trates tecnologías comunes o conceptos genéricos como entities por defecto.
+- Tecnologías como OpenAI, Docker o PostgreSQL solo deben ir en facts si aportan contexto útil.
+</classification_rules>
+
+<task_rules>
+- user_goal debe ser concreto y actual.
+- current_topic debe reflejar el foco actual.
+- No uses task_status="completed" sin evidencia clara.
+- Si no hay evidencia de otro estado, usa task_status="in_progress".
+- active_subtasks: solo tareas realmente activas.
+- next_steps: acciones concretas y plausibles, no genéricas.
+- success_criteria: condiciones verificables.
+- blocked_by: solo bloqueos reales.
+</task_rules>
+
+<facts_rules>
+- Un hecho por elemento.
+- Solo hechos atómicos, útiles y reutilizables.
+- No dupliques hechos equivalentes.
+- No pongas en facts información que pertenezca a otro bloque.
+- source debe ser uno de: user_explicit, assistant_inferred, tool_observed, system_defined.
+- confidence=1.0 si es explícito; <1.0 si es inferencia.
+- expires_after_turns=null salvo que sea claramente temporal.
+</facts_rules>
+
+<entity_rules>
+- Usa entities solo para personas y entidades clave del usuario.
+- No uses entities para tecnologías comunes ni conceptos genéricos.
+- No dupliques entidades equivalentes.
+- Mantén nombres canónicos y cortos.
+- Usa attributes solo si aportan valor.
+</entity_rules>
+
+<decision_rules>
+- Guarda solo decisiones de diseño reales y relevantes.
+- No inventes decisiones.
+- No dupliques constraints como decisions.
+- Si una decisión reemplaza otra, marca la anterior como superseded.
+</decision_rules>
+
+<open_question_rules>
+- Guarda solo preguntas realmente abiertas.
+- No inventes preguntas innecesarias.
+- No elimines preguntas salvo resolución clara.
+</open_question_rules>
+
+<constraint_rules>
+- Guarda solo restricciones obligatorias.
+- No conviertas descripciones del stack en constraints.
+- Si el usuario expresa preferencia, clasifícala como preference.
+</constraint_rules>
+
+<preference_rules>
+- Guarda preferencias de comportamiento o estilo.
+- No dupliques keys.
+- stability debe ser session por defecto o persistent si es claramente estable.
+
+Normalización preferida cuando aplique:
+- idioma → key: "language", value: "spanish"
+- ejemplos → key: "examples", value: "python"
+- estilo → key: "explanation_length", value: "short"
+</preference_rules>
+
+<risk_rules>
+- Guarda solo riesgos o ambigüedades reales.
+- Mantén la lista pequeña y útil.
+</risk_rules>
+
+<artifact_rules>
+- Guarda solo artefactos relevantes y reutilizables.
+- Incluye archivos, código y componentes clave.
+- No guardes elementos irrelevantes o efímeros.
+</artifact_rules>
+
+<summary_rules>
+- summary_for_reentry debe ser corto, denso y útil.
+- Prioriza formato tipo:
+  "Usuario: X. Objetivo: Y. Restricciones: Z. Preferencias: W. Estado: ..."
+- Evita frases largas.
+- Incluye solo lo crítico para retomar la conversación.
+</summary_rules>
+
+<final_check>
+Antes de responder:
+- elimina duplicados dentro y entre bloques
+- resuelve contradicciones usando la información más reciente
+- mueve fuera de facts lo que pertenezca a otro bloque
+- corrige constraints duplicadas como decisions
+- valida uso correcto de entities
+- valida task_status
+- valida que summary_for_reentry sea corto y denso
+- valida coherencia interna
+- valida que el JSON cumpla el esquema
+</final_check>

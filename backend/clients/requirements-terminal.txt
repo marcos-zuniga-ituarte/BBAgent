@@ -1,0 +1,2 @@
+# Dependencia del cliente de terminal (Linux/macOS o WSL con Bash).
+requests==2.33.1

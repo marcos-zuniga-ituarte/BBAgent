@@ -1,0 +1,4 @@
+# Dependencias para ambos clientes: terminal y control grafico.
+-r requirements-terminal.txt
+Pillow
+PyAutoGUI

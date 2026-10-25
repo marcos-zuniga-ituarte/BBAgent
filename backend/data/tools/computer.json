@@ -1,0 +1,32 @@
+[
+  {
+    "type": "function",
+    "name": "computer_batch",
+    "description": "Ejecuta acciones de interfaz gráfica en el cliente remoto y devuelve el estado resultante.",
+    "parameters": {
+      "type": "object",
+      "properties": {
+        "actions": {
+          "type": "array",
+          "description": "Lista ordenada de acciones a ejecutar",
+          "items": {
+            "type": "object",
+            "properties": {
+              "type": { "type": "string" },
+              "x": { "type": "number" },
+              "y": { "type": "number" },
+              "text": { "type": "string" },
+              "button": { "type": "string" },
+              "keys": {
+                "type": "array",
+                "items": { "type": "string" }
+              }
+            },
+            "required": ["type"]
+          }
+        }
+      },
+      "required": ["actions"]
+    }
+  }
+]

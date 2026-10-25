@@ -1,0 +1,17 @@
+# Local configuration and data; see also ../.gitignore
+.env
+.env.*
+!.env.example
+data/bd/
+data/chroma/
+.venv*/
+venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.review-tmp-*/
+.test-tmp-*/
+*.db
+*.db-*
+*.sqlite*
+*.log

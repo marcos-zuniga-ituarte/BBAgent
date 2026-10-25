@@ -1,0 +1,117 @@
+<task>
+Reconstruye por completo la memoria estructurada de la conversación.
+</task>
+
+<output_contract>
+- Devuelve solo un JSON válido del esquema ConversationMemory.
+- No escribas texto fuera del JSON.
+- No añadas comentarios, explicaciones ni markdown.
+- No añadas campos fuera del esquema.
+</output_contract>
+
+<core_rules>
+- Usa siempre la información más reciente en caso de conflicto.
+- No inventes información.
+- No conviertas inferencias en hechos sin marcarlo.
+- Conserva solo información útil para futuros turnos.
+- Elimina small talk, cortesías, ruido, duplicados, contenido resuelto, obsoleto o contradictorio.
+- La memoria final debe ser completa, coherente y sin duplicados semánticos.
+</core_rules>
+
+<id_rules>
+- Mantén el mismo id si el elemento sigue siendo el mismo.
+- Para elementos nuevos, usa next_id de forma secuencial.
+- Deja next_id preparado para el siguiente elemento nuevo.
+</id_rules>
+
+<classification_rules>
+Clasifica cada dato en el campo más específico posible, con esta prioridad:
+
+1. entities: personas, empresas, proyectos, APIs, archivos relevantes
+2. constraints: requisitos obligatorios o limitaciones reales
+3. preferences: gustos o preferencias del usuario
+4. decisions: decisiones que afectan el comportamiento futuro
+5. artifacts: archivos, clases, funciones, endpoints, prompts, schemas u otros artefactos reutilizables
+6. facts: solo si no encaja claramente en los anteriores
+
+Reglas:
+- No uses facts como contenedor genérico.
+- Si un dato encaja en otro bloque, no lo pongas en facts.
+- Prefiere estructuras específicas frente a facts.
+</classification_rules>
+
+<task_rules>
+- user_goal debe ser concreto y actual.
+- current_topic debe reflejar el foco actual.
+- No uses task_status="completed" sin evidencia clara.
+- No cambies task_status sin motivo claro.
+- active_subtasks: solo tareas realmente activas.
+- next_steps: pasos concretos y plausibles.
+- success_criteria: condiciones claras.
+- blocked_by: solo bloqueos reales.
+</task_rules>
+
+<facts_rules>
+- Un hecho por elemento.
+- Solo hechos atómicos, útiles y reutilizables.
+- No dupliques hechos equivalentes.
+- No pongas en facts información que pertenezca a otro bloque.
+- source debe ser uno de: user_explicit, assistant_inferred, tool_observed, system_defined.
+- confidence=1.0 si es explícito; <1.0 si es inferencia.
+- expires_after_turns=null salvo que sea claramente temporal.
+</facts_rules>
+
+<entity_rules>
+- Usa nombres canónicos y cortos.
+- No dupliques entidades equivalentes.
+- Usa attributes solo si aportan valor.
+- No dejes entidades importantes en facts.
+</entity_rules>
+
+<decision_rules>
+- Guarda solo decisiones reales que afecten el futuro.
+- No inventes decisiones.
+- Si una decisión reemplaza otra, marca la anterior como superseded.
+</decision_rules>
+
+<open_question_rules>
+- Guarda solo preguntas realmente abiertas.
+- No inventes preguntas innecesarias.
+- No elimines preguntas salvo resolución clara.
+- Usa blocking=true solo si realmente impide avanzar.
+</open_question_rules>
+
+<constraint_rules>
+- Guarda solo restricciones reales y obligatorias.
+- No conviertas descripciones del stack en constraints.
+- Si el usuario expresa una preferencia, clasifícala como preference.
+- No endurezcas restricciones sin evidencia explícita.
+</constraint_rules>
+
+<preference_rules>
+- Guarda preferencias de estilo, comportamiento o elección.
+- key debe ser corta, estable y no duplicada.
+- stability debe ser session o persistent.
+</preference_rules>
+
+<risk_rules>
+- Guarda solo riesgos, ambigüedades o incertidumbres relevantes.
+- Mantén la lista pequeña y útil.
+</risk_rules>
+
+<artifact_rules>
+- Guarda solo artefactos reutilizables y relevantes.
+- No guardes elementos efímeros o irrelevantes.
+</artifact_rules>
+
+<final_check>
+Antes de responder:
+- elimina duplicados
+- resuelve contradicciones usando la información más reciente
+- corrige mala clasificación
+- mueve fuera de facts lo que pertenezca a otro bloque
+- valida task_status
+- valida que constraints y entities estén justificadas
+- valida coherencia interna
+- valida que el JSON cumpla el esquema
+</final_check>

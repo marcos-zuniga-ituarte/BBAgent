@@ -1,0 +1,23 @@
+[{
+  "type": "function",
+  "name": "terminal",
+  "description": "Envía exactamente un único texto a la terminal activa. Puede usarse tanto para ejecutar un comando como para responder a un prompt interactivo dentro de una sesión ya iniciada.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "command": {
+        "type": "string",
+        "description": "Texto exacto a enviar a la terminal activa. Puede ser un comando, una contraseña, una confirmación o cualquier otra entrada requerida por una interacción en curso."
+      },
+      "requires_confirmation": {
+        "type": "boolean",
+        "description": "Indica si el paso es sensible o crítico y puede requerir confirmación antes de ejecutarse."
+      },
+      "reason": {
+        "type": "string",
+        "description": "Motivo breve de por qué el paso se considera sensible o crítico."
+      }
+    },
+    "required": ["command", "requires_confirmation"]
+  }
+}]
